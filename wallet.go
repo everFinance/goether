@@ -79,7 +79,7 @@ func (w *Wallet) SendTx(
 	}
 
 	if opts.Nonce == nil {
-		nonce, err = w.GetNonce()
+		nonce, err = w.GetPendingNonce()
 		if err != nil {
 			return
 		}
@@ -128,6 +128,10 @@ func (w *Wallet) GetAddress() string {
 
 func (w *Wallet) GetNonce() (nonce int, err error) {
 	return w.Client.EthGetTransactionCount(w.GetAddress(), "latest")
+}
+
+func (w *Wallet) GetPendingNonce() (nonce int, err error) {
+	return w.Client.EthGetTransactionCount(w.GetAddress(), "pending")
 }
 
 func (w *Wallet) GetBalance() (balance big.Int, err error) {

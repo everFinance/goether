@@ -23,11 +23,23 @@ if err != nil {
 }
 
 txHash, err := testWallet.SendTx(
-		common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"), // To
-		goether.EthToBN(0.12), // Value
-		[]byte("123"),         // Data
-		nil)
-fmt.Println(txHash, err)
+  common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"), // To
+  goether.EthToBN(0.12), // Value
+  []byte("123"),         // Data
+  nil)
+
+// send with opts
+nonce := int(1)
+gasLimit := int(999999)
+txHash, err := testWallet.SendTx(
+  common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"),
+  goether.EthToBN(0.12),
+  []byte("123"),
+  &goether.TxOpts{ // Configure nonce/gas yourself
+    Nonce: &nonce,
+    GasLimit: &gasLimit,
+    GasPrice: goether.GweiToBN(10),
+  })
 ```
 
 Contract Interaction
@@ -44,9 +56,20 @@ if err != nil {
 }
 
 // ERC20 BalanceOf
-amount, err := testContract.CallMethod("balanceOf", "latest", common.HexToAddress("0xa06b79e655db7d7c3b3e7b2cceeb068c3259d0c9"))
+amount, err := testContract.CallMethod(
+  "balanceOf", // Method name
+  "latest", // Tag
+  common.HexToAddress("0xa06b79e655db7d7c3b3e7b2cceeb068c3259d0c9")) // Args
 // ERC20 Tansfer
-txHash, err := testContract.ExecMethod("transfer", nil, common.HexToAddress("0xab6c371B6c466BcF14d4003601951e5873dF2AcA"), big.NewInt(100))
+txHash, err := testContract.ExecMethod(
+  "transfer", // Method name
+  &goether.TxOpts{ // Configure nonce/gas yourself, nil load params from eth-node
+    Nonce: &nonce,
+    GasLimit: &gasLimit,
+    GasPrice: goether.GweiToBN(10),
+  },
+  common.HexToAddress("0xab6c371B6c466BcF14d4003601951e5873dF2AcA"), // Args
+  big.NewInt(100))
 ```
 
 ## Modules
@@ -67,8 +90,14 @@ Connect to Ethereum Network, execute state changing operations.
 - [x] GetAddress
 - [x] GetBalance
 - [x] GetNonce
+- [x] GetPendingNonce
 
 ### Contract
+
+Creating Contract Instance for call & execute contract.
+
+- [x] CallMethod
+- [x] ExecMethod
 
 ### Utils
 
