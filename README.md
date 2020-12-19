@@ -49,6 +49,7 @@ contractAddr := common.HexToAddress("contract address")
 prvHex := "your prvkey"
 rpc := "https://kovan.infura.io/v3/{{InfuraKey}}"
 
+// init contract instance with wallet
 testWallet, _ := goether.NewWallet(prvHex, rpc)
 testContract, err := goether.NewContract(contractAddr, abi, rpc, testWallet)
 if err != nil {
@@ -60,7 +61,8 @@ amount, err := testContract.CallMethod(
   "balanceOf", // Method name
   "latest", // Tag
   common.HexToAddress("0xa06b79e655db7d7c3b3e7b2cceeb068c3259d0c9")) // Args
-// ERC20 Tansfer
+
+// ERC20 Transfer
 txHash, err := testContract.ExecMethod(
   "transfer", // Method name
   &goether.TxOpts{ // Configure nonce/gas yourself, nil load params from eth-node
