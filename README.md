@@ -19,7 +19,11 @@ if err != nil {
   panic(err)
 }
 
-txHash, err := testWallet.SendTx(nil, common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"), goether.EthToBN(0.12), big.NewInt(100000), goether.GweiToBN(2), []byte("123"))
+txHash, err := testWallet.SendTx(
+		common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"), // To
+		goether.EthToBN(0.12), // Value
+		[]byte("123"),         // Data
+		nil)
 fmt.Println(txHash, err)
 ```
 
@@ -41,6 +45,8 @@ Connect to Ethereum Network, execute state changing operations.
 - [x] GetAddress
 - [x] GetBalance
 - [x] GetNonce
+
+### Contract
 
 ### Utils
 

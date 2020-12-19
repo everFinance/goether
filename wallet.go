@@ -11,6 +11,12 @@ import (
 	"github.com/everFinance/ethrpc"
 )
 
+type TxOpts struct {
+	Nonce    *int
+	GasLimit *int
+	GasPrice *big.Int
+}
+
 type Wallet struct {
 	Address common.Address
 	ChainID *big.Int
@@ -55,39 +61,55 @@ func NewWalletFromPath(prvPath, rpc string) (*Wallet, error) {
 }
 
 func (w *Wallet) SendTx(
-	nonce *big.Int, to common.Address, amount *big.Int,
-	gasLimit *big.Int, gasPrice *big.Int, data []byte,
+	to common.Address, amount *big.Int,
+	data []byte, opts *TxOpts,
 ) (txHash string, err error) {
-	if nonce == nil {
-		n, err := w.GetNonce()
-		if err != nil {
-			return "", err
-		}
 
-		nonce = big.NewInt(int64(n))
+	var nonce, gasLimit int
+	var gasPrice big.Int
+	ethrpcTx := ethrpc.T{
+		From:  w.Address.String(),
+		To:    to.String(),
+		Value: amount,
+		Data:  hexutil.Encode(data),
+	}
+
+	if opts == nil {
+		opts = &TxOpts{}
+	}
+
+	if opts.Nonce == nil {
+		nonce, err = w.GetNonce()
+		if err != nil {
+			return
+		}
+		opts.Nonce = &nonce
+	}
+
+	if opts.GasLimit == nil {
+		gasLimit, err = w.Client.EthEstimateGas(ethrpcTx)
+		if err != nil {
+			return
+		}
+		opts.GasLimit = &gasLimit
+	}
+
+	if opts.GasPrice == nil {
+		gasPrice, err = w.Client.EthGasPrice()
+		if err != nil {
+			return
+		}
+		opts.GasPrice = &gasPrice
 	}
 
 	if amount == nil {
 		amount = big.NewInt(0)
 	}
 
-	if gasLimit == nil {
-		gas, err := w.Client.EthEstimateGas(ethrpc.T{
-			From:  w.Address.String(),
-			To:    to.String(),
-			Value: amount,
-			Data:  hexutil.Encode(data),
-		})
-		if err != nil {
-			return "", err
-		}
-
-		gasLimit = big.NewInt(int64(gas))
-	}
-
 	tx, err := w.Signer.SignTx(
-		int(nonce.Int64()), to, amount,
-		int(gasLimit.Int64()), gasPrice, data, w.ChainID)
+		*opts.Nonce, to, amount,
+		*opts.GasLimit, opts.GasPrice,
+		data, w.ChainID)
 	if err != nil {
 		return
 	}

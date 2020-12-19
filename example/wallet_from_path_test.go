@@ -1,7 +1,6 @@
 package example
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/everFinance/goether"
@@ -16,5 +15,5 @@ func TestWalletFromPath(t *testing.T) {
 		panic(err)
 	}
 
-	fmt.Println(testWallet.Address.String())
+	t.Log(testWallet.Address.String())
 }
