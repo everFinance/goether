@@ -33,6 +33,5 @@ func TestWalletSend(t *testing.T) {
 			GasLimit: &gasLimit,
 			GasPrice: goether.GweiToBN(2.1),
 		})
-
 	t.Log(txHash, err)
 }
