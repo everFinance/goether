@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -57,7 +58,7 @@ func NewWalletFromPath(prvPath, rpc string) (*Wallet, error) {
 		return nil, err
 	}
 
-	return NewWallet(string(b), rpc)
+	return NewWallet(strings.TrimSpace(string(b)), rpc)
 }
 
 func (w *Wallet) SendTx(

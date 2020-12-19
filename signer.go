@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"io/ioutil"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
@@ -34,7 +35,7 @@ func NewSignerFromPath(prvPath string) (*Signer, error) {
 		return nil, err
 	}
 
-	return NewSigner(string(b))
+	return NewSigner(strings.TrimSpace(string(b)))
 }
 
 func (s *Signer) SignTx(
