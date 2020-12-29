@@ -100,6 +100,12 @@ Creating Contract Instance for call & execute contract.
 
 - [x] CallMethod
 - [x] ExecMethod
+- [x] EncodeData
+- [x] EncodeDataHex
+- [x] DecodeData
+- [x] DecodeDataHex
+- [x] DecodeEvent
+- [x] DecodeEventHex
 
 ### Utils
 
