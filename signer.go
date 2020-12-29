@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/signer/core"
 )
 
 type Signer struct {
@@ -54,6 +55,21 @@ func (s *Signer) SignTx(
 
 func (s Signer) SignMsg(msg []byte) (sig []byte, err error) {
 	hash := accounts.TextHash(msg)
+	sig, err = crypto.Sign(hash, s.key)
+	if err != nil {
+		return
+	}
+
+	sig[64] += 27
+	return
+}
+
+func (s Signer) SignTypedData(typedData core.TypedData) (sig []byte, err error) {
+	hash, err := EIP712Hash(typedData)
+	if err != nil {
+		return
+	}
+
 	sig, err = crypto.Sign(hash, s.key)
 	if err != nil {
 		return

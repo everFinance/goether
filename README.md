@@ -82,7 +82,7 @@ Ethereum Account which can be used to sign messages and transactions.
 
 - [x] SignTx
 - [x] SignMsg
-- [ ] SignTypedData
+- [x] SignTypedData
 
 ### Wallet
 
@@ -111,4 +111,5 @@ Creating Contract Instance for call & execute contract.
 
 - [x] EthToBN
 - [x] GweiToBN
+- [x] EIP712Hash
 - [x] Ecrecover
