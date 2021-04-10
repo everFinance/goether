@@ -42,4 +42,8 @@ func TestEcrecover(t *testing.T) {
 	addr, err := Ecrecover(hash, sig)
 	assert.NoError(t, err)
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
+	// run again
+	addr, err = Ecrecover(hash, sig)
+	assert.NoError(t, err)
+	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
 }

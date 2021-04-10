@@ -35,7 +35,9 @@ func EIP712Hash(typedData core.TypedData) (hash []byte, err error) {
 	return
 }
 
-func Ecrecover(hash, sig []byte) (addr common.Address, err error) {
+func Ecrecover(hash, sigData []byte) (addr common.Address, err error) {
+	sig := make([]byte, len(sigData))
+	copy(sig, sigData)
 	if len(sig) != 65 {
 		err = fmt.Errorf("invalid length of signture: %d", len(sig))
 		return
