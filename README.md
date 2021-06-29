@@ -80,9 +80,14 @@ txHash, err := testContract.ExecMethod(
 
 Ethereum Account which can be used to sign messages and transactions.
 
+- [x] NewSignerFromMnemonic
 - [x] SignTx
 - [x] SignMsg
 - [x] SignTypedData
+- [x] GetPublicKey
+- [x] GetPublicKeyHex
+- [x] GetPrivateKey
+- [x] Decrypt
 
 ### Wallet
 
@@ -113,3 +118,4 @@ Creating Contract Instance for call & execute contract.
 - [x] GweiToBN
 - [x] EIP712Hash
 - [x] Ecrecover
+- [x] Encrypt

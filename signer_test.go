@@ -44,3 +44,38 @@ func TestSignTypedData(t *testing.T) {
 	addr, err := Ecrecover(hash, sig)
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
 }
+
+func TestNewSignerFromMnemonic(t *testing.T) {
+	mnemonic := "bean satisfy swarm account lizard window renew hen people cousin rural liquid"
+	address := "0x022D4F7c757f61ed006Cd06A74cDf4E1510Af9C4"
+	signer, err := NewSignerFromMnemonic(mnemonic)
+	assert.NoError(t, err)
+	assert.Equal(t, address, signer.Address.String())
+}
+
+func TestSigner_Decrypt_Encrypt(t *testing.T) {
+	mnemonic := "bean satisfy swarm account lizard window renew hen people cousin rural liquid"
+	signer, err := NewSignerFromMnemonic(mnemonic)
+	assert.NoError(t, err)
+
+	msg := "aaa bbb ccc ddd"
+	pubkey := signer.GetPublicKeyHex()
+	ct, err := Encrypt(pubkey, []byte(msg))
+	assert.NoError(t, err)
+
+	decMsg, err := signer.Decrypt(ct)
+	assert.NoError(t, err)
+
+	assert.Equal(t, msg, string(decMsg))
+
+	// test02
+	msg02 := "aaa 1234 你好 ..."
+	pubkey = TestSigner.GetPublicKeyHex()
+	ct, err = Encrypt(pubkey, []byte(msg02))
+	assert.NoError(t, err)
+
+	decMsg, err = TestSigner.Decrypt(ct)
+	assert.NoError(t, err)
+
+	assert.Equal(t, msg02, string(decMsg))
+}
