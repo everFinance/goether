@@ -1,7 +1,9 @@
 package goether
 
 import (
+	"crypto/rand"
 	"fmt"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -62,4 +64,19 @@ func Ecrecover(hash, sigData []byte) (addr common.Address, err error) {
 
 	addr = crypto.PubkeyToAddress(*pubKey)
 	return
+}
+
+// Encrypt encrypt
+func Encrypt(publicKey string, message []byte) ([]byte, error) {
+	pub := common.FromHex(publicKey)
+	pubKey, err := crypto.UnmarshalPubkey(pub)
+	if err != nil {
+		return nil, err
+	}
+	eciesPub := ecies.ImportECDSAPublic(pubKey)
+	result, err := ecies.Encrypt(rand.Reader, eciesPub, message, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
