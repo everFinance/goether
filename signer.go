@@ -2,13 +2,12 @@ package goether
 
 import (
 	"crypto/ecdsa"
-	"encoding/hex"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
 	"io/ioutil"
 	"math/big"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
@@ -41,25 +40,6 @@ func NewSignerFromPath(prvPath string) (*Signer, error) {
 	}
 
 	return NewSigner(strings.TrimSpace(string(b)))
-}
-
-func NewSignerFromMnemonic(mnemonic string) (*Signer, error) {
-	wallet, err := hdwallet.NewFromMnemonic(mnemonic)
-	if err != nil {
-		return nil, err
-	}
-	path := hdwallet.MustParseDerivationPath("m/44'/60'/0'/0/0") // ethereum private path
-	account, err := wallet.Derive(path, false)
-	if err != nil {
-		return nil, err
-	}
-	priv, err := wallet.PrivateKey(account)
-	if err != nil {
-		return nil, err
-	}
-
-	prvHex := crypto.FromECDSA(priv)
-	return NewSigner(hex.EncodeToString(prvHex))
 }
 
 func (s Signer) GetPrivateKey() *ecdsa.PrivateKey {

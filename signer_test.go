@@ -45,17 +45,8 @@ func TestSignTypedData(t *testing.T) {
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
 }
 
-func TestNewSignerFromMnemonic(t *testing.T) {
-	mnemonic := "bean satisfy swarm account lizard window renew hen people cousin rural liquid"
-	address := "0x022D4F7c757f61ed006Cd06A74cDf4E1510Af9C4"
-	signer, err := NewSignerFromMnemonic(mnemonic)
-	assert.NoError(t, err)
-	assert.Equal(t, address, signer.Address.String())
-}
-
 func TestSigner_Decrypt_Encrypt(t *testing.T) {
-	mnemonic := "bean satisfy swarm account lizard window renew hen people cousin rural liquid"
-	signer, err := NewSignerFromMnemonic(mnemonic)
+	signer, err := NewSigner("dde30fa25128addf45656a39c0570fd06fce3e48056457b9f1f9fda603cc4be1")
 	assert.NoError(t, err)
 
 	msg := "aaa bbb ccc ddd"
