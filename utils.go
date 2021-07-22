@@ -37,19 +37,21 @@ func EIP712Hash(typedData core.TypedData) (hash []byte, err error) {
 	return
 }
 
-func Ecrecover(hash, sigData []byte) (addr common.Address, err error) {
-	sig := make([]byte, len(sigData))
-	copy(sig, sigData)
+func Ecrecover(hash, signature []byte) (addr common.Address, err error) {
+	sig := make([]byte, len(signature))
+	copy(sig, signature)
 	if len(sig) != 65 {
 		err = fmt.Errorf("invalid length of signture: %d", len(sig))
 		return
 	}
 
-	if sig[64] != 27 && sig[64] != 28 {
+	if sig[64] != 27 && sig[64] != 28 && sig[64] != 1 && sig[64] != 0 {
 		err = fmt.Errorf("invalid signature type")
 		return
 	}
-	sig[64] -= 27
+	if sig[64] >= 27 {
+		sig[64] -= 27
+	}
 
 	recoverPub, err := crypto.Ecrecover(hash, sig)
 	if err != nil {

@@ -2,7 +2,9 @@ package goether
 
 import (
 	"encoding/json"
+	"github.com/ethereum/go-ethereum/core/types"
 	"math/big"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/accounts"
@@ -46,4 +48,42 @@ func TestEcrecover(t *testing.T) {
 	addr, err = Ecrecover(hash, sig)
 	assert.NoError(t, err)
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
+
+	tx := &types.Transaction{}
+	// eip1559 tx
+	data := []byte(`{
+			"accessList": [],
+			"blockHash": "0xe936ee0e5a915b9c163a7a1ff67269dd5f1ccb981f91b269a2130711e6a62598",
+			"blockNumber": "0xa2f4f1",
+			"chainId": "0x3",
+			"from": "0xcba9f09e7e6b4a41a9d11f347416b75ee100344f",
+			"gas": "0x5208",
+			"gasPrice": "0x3b9aca0a",
+			"hash": "0x87f6d244a9f99b2fb173f3eece4beecabb88da46c90f558b4d57fd10d8cb247b",
+			"input": "0x",
+			"maxFeePerGas": "0x22ecb25c00",
+			"maxPriorityFeePerGas": "0x3b9aca00",
+			"nonce": "0x1",
+			"r": "0x6f741f168a787c708be5d7670de97b05c7e0a2e2f1959dd11fe5213508ea44a0",
+			"s": "0x2e409f1b92769885c45f87bbdb858740e0bf7b74c1cd8297bcefbccb6b35ac21",
+			"to": "0xc8d40bbc3ea2018ab8d76dbbee32f906207966d0",
+			"transactionIndex": "0x72",
+			"type": "0x2",
+			"v": "0x0",
+			"value": "0xaa87bee538000"
+	}`)
+
+	err = tx.UnmarshalJSON(data)
+	assert.NoError(t, err)
+	sigHash := types.NewLondonSigner(tx.ChainId()).Hash(tx)
+
+	// assemble london tx signature
+	sig = make([]byte, 0, 65)
+	v, r, s := tx.RawSignatureValues()
+	sig = append(r.Bytes(), s.Bytes()...)
+	sig = append(sig, byte(v.Uint64()))
+	// verify
+	addr, err = Ecrecover(sigHash.Bytes(), sig)
+	assert.NoError(t, err)
+	assert.Equal(t, "0xcba9f09e7e6b4a41a9d11f347416b75ee100344f", strings.ToLower(addr.String()))
 }
