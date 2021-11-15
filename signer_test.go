@@ -22,8 +22,9 @@ func TestAddress(t *testing.T) {
 }
 
 func TestSignTx(t *testing.T) {
-	_, err := TestSigner.SignTx(1, common.HexToAddress("0xab6c371B6c466BcF14d4003601951e5873dF2AcA"), big.NewInt(0), 21000, big.NewInt(100000000000), nil, big.NewInt(42))
+	tx, err := TestSigner.SignTx(1, common.HexToAddress("0xab6c371B6c466BcF14d4003601951e5873dF2AcA"), big.NewInt(0), 21000, big.NewInt(100000000000), nil, big.NewInt(42))
 	assert.NoError(t, err)
+	assert.Equal(t, big.NewInt(42), tx.ChainId())
 }
 
 func TestSignMsg(t *testing.T) {

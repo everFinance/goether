@@ -8,7 +8,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/everFinance/ethrpc"
 )
 
@@ -115,7 +114,7 @@ func (w *Wallet) SendTx(
 		return
 	}
 
-	raw, err := rlp.EncodeToBytes(tx)
+	raw, err := tx.MarshalBinary()
 	if err != nil {
 		return
 	}

@@ -59,13 +59,16 @@ func (s *Signer) SignTx(
 	gasLimit int, gasPrice *big.Int,
 	data []byte, chainID *big.Int,
 ) (tx *types.Transaction, err error) {
-	return types.SignTx(
-		types.NewTransaction(
-			uint64(nonce), to, amount,
-			uint64(gasLimit), gasPrice, data),
-		types.NewEIP155Signer(chainID),
-		s.key,
-	)
+	basTx := &types.DynamicFeeTx{
+		Nonce:     uint64(nonce),
+		GasTipCap: gasPrice,
+		GasFeeCap: gasPrice,
+		Gas:       uint64(gasLimit),
+		To:        &to,
+		Value:     amount,
+		Data:      data,
+	}
+	return types.SignNewTx(s.key, types.LatestSignerForChainID(chainID), basTx)
 }
 
 func (s Signer) SignMsg(msg []byte) (sig []byte, err error) {
