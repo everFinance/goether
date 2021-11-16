@@ -21,7 +21,7 @@ testWallet, err := goether.NewWallet(prvHex, rpc)
 if err != nil {
   panic(err)
 }
-
+// default send DynamicFeeTx
 txHash, err := testWallet.SendTx(
   common.HexToAddress("0xa06b79E655Db7D7C3B3E7B2ccEEb068c3259d0C9"), // To
   goether.EthToBN(0.12), // Value
@@ -94,6 +94,7 @@ Ethereum Account which can be used to sign messages and transactions.
 Connect to Ethereum Network, execute state changing operations.
 
 - [x] SendTx
+- [x] SendLegacyTx
 - [x] GetAddress
 - [x] GetBalance
 - [x] GetNonce
