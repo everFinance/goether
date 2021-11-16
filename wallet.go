@@ -12,9 +12,11 @@ import (
 )
 
 type TxOpts struct {
-	Nonce    *int
-	GasLimit *int
-	GasPrice *big.Int
+	Nonce     *int
+	GasLimit  *int
+	GasPrice  *big.Int
+	GasTipCap *big.Int
+	GasFeeCap *big.Int
 }
 
 type Wallet struct {
@@ -60,46 +62,10 @@ func NewWalletFromPath(prvPath, rpc string) (*Wallet, error) {
 	return NewWallet(strings.TrimSpace(string(b)), rpc)
 }
 
-func (w *Wallet) SendTx(
-	to common.Address, amount *big.Int,
-	data []byte, opts *TxOpts,
-) (txHash string, err error) {
-
-	var nonce, gasLimit int
-	var gasPrice big.Int
-	ethrpcTx := ethrpc.T{
-		From:  w.Address.String(),
-		To:    to.String(),
-		Value: amount,
-		Data:  hexutil.Encode(data),
-	}
-
-	if opts == nil {
-		opts = &TxOpts{}
-	}
-
-	if opts.Nonce == nil {
-		nonce, err = w.GetPendingNonce()
-		if err != nil {
-			return
-		}
-		opts.Nonce = &nonce
-	}
-
-	if opts.GasLimit == nil {
-		gasLimit, err = w.Client.EthEstimateGas(ethrpcTx)
-		if err != nil {
-			return
-		}
-		opts.GasLimit = &gasLimit
-	}
-
-	if opts.GasPrice == nil {
-		gasPrice, err = w.Client.EthGasPrice()
-		if err != nil {
-			return
-		}
-		opts.GasPrice = &gasPrice
+func (w *Wallet) SendTx(to common.Address, amount *big.Int, data []byte, opts *TxOpts) (txHash string, err error) {
+	opts, err = w.initTxOpts(to, amount, data, opts)
+	if err != nil {
+		return
 	}
 
 	if amount == nil {
@@ -107,6 +73,31 @@ func (w *Wallet) SendTx(
 	}
 
 	tx, err := w.Signer.SignTx(
+		*opts.Nonce, to, amount,
+		*opts.GasLimit, opts.GasTipCap, opts.GasFeeCap,
+		data, w.ChainID)
+	if err != nil {
+		return
+	}
+
+	raw, err := tx.MarshalBinary()
+	if err != nil {
+		return
+	}
+
+	return w.Client.EthSendRawTransaction(hexutil.Encode(raw))
+}
+
+func (w *Wallet) SendLegacyTx(to common.Address, amount *big.Int, data []byte, opts *TxOpts) (txHash string, err error) {
+	opts, err = w.initTxOpts(to, amount, data, opts)
+	if err != nil {
+		return
+	}
+
+	if amount == nil {
+		amount = big.NewInt(0)
+	}
+	tx, err := w.Signer.SignLegacyTx(
 		*opts.Nonce, to, amount,
 		*opts.GasLimit, opts.GasPrice,
 		data, w.ChainID)
@@ -120,6 +111,55 @@ func (w *Wallet) SendTx(
 	}
 
 	return w.Client.EthSendRawTransaction(hexutil.Encode(raw))
+}
+
+func (w *Wallet) initTxOpts(to common.Address, amount *big.Int, data []byte, opts *TxOpts) (*TxOpts, error) {
+	var (
+		nonce, gasLimit int
+		gasPrice        big.Int
+		err             error
+	)
+
+	if opts == nil {
+		opts = &TxOpts{}
+	}
+
+	if opts.Nonce == nil {
+		nonce, err = w.GetPendingNonce()
+		if err != nil {
+			return nil, err
+		}
+		opts.Nonce = &nonce
+	}
+
+	if opts.GasLimit == nil {
+		ethrpcTx := ethrpc.T{
+			From:  w.Address.String(),
+			To:    to.String(),
+			Value: amount,
+			Data:  hexutil.Encode(data),
+		}
+		gasLimit, err = w.Client.EthEstimateGas(ethrpcTx)
+		if err != nil {
+			return nil, err
+		}
+		opts.GasLimit = &gasLimit
+	}
+
+	if opts.GasPrice == nil {
+		gasPrice, err = w.Client.EthGasPrice()
+		if err != nil {
+			return nil, err
+		}
+		opts.GasPrice = &gasPrice
+	}
+
+	if opts.GasTipCap == nil || opts.GasFeeCap == nil {
+		opts.GasTipCap = opts.GasPrice
+		opts.GasFeeCap = opts.GasPrice
+	}
+
+	return opts, nil
 }
 
 func (w *Wallet) GetAddress() string {
