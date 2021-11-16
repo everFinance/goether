@@ -54,7 +54,25 @@ func (s Signer) GetPublicKeyHex() string {
 	return hexutil.Encode(s.GetPublicKey())
 }
 
+// SignTx DynamicFeeTx
 func (s *Signer) SignTx(
+	nonce int, to common.Address, amount *big.Int,
+	gasLimit int, gasTipCap *big.Int, gasFeeCap *big.Int,
+	data []byte, chainID *big.Int,
+) (tx *types.Transaction, err error) {
+	baseTx := &types.DynamicFeeTx{
+		Nonce:     uint64(nonce),
+		GasTipCap: gasTipCap,
+		GasFeeCap: gasFeeCap,
+		Gas:       uint64(gasLimit),
+		To:        &to,
+		Value:     amount,
+		Data:      data,
+	}
+	return types.SignNewTx(s.key, types.LatestSignerForChainID(chainID), baseTx)
+}
+
+func (s *Signer) SignLegacyTx(
 	nonce int, to common.Address, amount *big.Int,
 	gasLimit int, gasPrice *big.Int,
 	data []byte, chainID *big.Int,
