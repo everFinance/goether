@@ -3,12 +3,12 @@ package goether
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/signer/core"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 func EthToBN(amount float64) (bn *big.Int) {
@@ -23,7 +23,7 @@ func GweiToBN(amount float64) (bn *big.Int) {
 	return bn
 }
 
-func EIP712Hash(typedData core.TypedData) (hash []byte, err error) {
+func EIP712Hash(typedData apitypes.TypedData) (hash []byte, err error) {
 	domainSeparator, err := typedData.HashStruct("EIP712Domain", typedData.Domain.Map())
 	if err != nil {
 		return

@@ -13,7 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/signer/core"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 type Signer struct {
@@ -97,7 +97,7 @@ func (s Signer) SignMsg(msg []byte) (sig []byte, err error) {
 	return
 }
 
-func (s Signer) SignTypedData(typedData core.TypedData) (sig []byte, err error) {
+func (s Signer) SignTypedData(typedData apitypes.TypedData) (sig []byte, err error) {
 	hash, err := EIP712Hash(typedData)
 	if err != nil {
 		return
