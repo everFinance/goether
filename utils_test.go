@@ -2,14 +2,14 @@ package goether
 
 import (
 	"encoding/json"
-	"github.com/ethereum/go-ethereum/core/types"
 	"math/big"
 	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/signer/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +24,7 @@ func TestGweiToBN(t *testing.T) {
 func TestEIP712(t *testing.T) {
 	raw := `{"types": {"EIP712Domain": [{"name": "name","type": "string"},{"name": "version","type": "string"},{"name": "chainId","type": "uint256"}],"Order": [{"name": "action","type": "string"},{"name": "orderHashes","type": "string[]"},{"name": "makerAddress","type": "address"}]},"primaryType": "Order","domain": {"name": "ZooDex","version": "1","chainId": "42"},"message": {"action": "cancelOrder","orderHashes": ["0x123", "0x456", "0x789"],"makerAddress": "0xf9593A9d7F735814B87D08e8D8aD624f58d53B10"}}
 	`
-	typedData := core.TypedData{}
+	typedData := apitypes.TypedData{}
 	err := json.Unmarshal([]byte(raw), &typedData)
 	assert.NoError(t, err)
 
