@@ -37,7 +37,7 @@ func EIP712Hash(typedData apitypes.TypedData) (hash []byte, err error) {
 	return
 }
 
-func Ecrecover(hash, signature []byte) (addr common.Address, err error) {
+func Ecrecover(hash, signature []byte) (publicBy []byte, address common.Address, err error) {
 	sig := make([]byte, len(signature))
 	copy(sig, signature)
 	if len(sig) != 65 {
@@ -53,18 +53,13 @@ func Ecrecover(hash, signature []byte) (addr common.Address, err error) {
 		sig[64] -= 27
 	}
 
-	recoverPub, err := crypto.Ecrecover(hash, sig)
+	publicBy, err = crypto.Ecrecover(hash, sig)
 	if err != nil {
 		err = fmt.Errorf("can not ecrecover: %v", err)
 		return
 	}
-	pubKey, err := crypto.UnmarshalPubkey(recoverPub)
-	if err != nil {
-		err = fmt.Errorf("can not unmarshal pubkey: %v", err)
-		return
-	}
 
-	addr = crypto.PubkeyToAddress(*pubKey)
+	address = common.BytesToAddress(crypto.Keccak256(publicBy[1:])[12:])
 	return
 }
 

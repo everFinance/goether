@@ -45,7 +45,7 @@ func TestSignTypedData(t *testing.T) {
 	assert.Equal(t, "0x0a80cc322f7a5e5e0965ff84fd76ea6479fae9d8ce29f7e076c3b9cb8e8097b80052ee91f1fad54d4348c518e42395848431746c8fee40420041f87ea05b5a281c", hexutil.Encode(sig))
 
 	hash, err := EIP712Hash(typedData)
-	addr, err := Ecrecover(hash, sig)
+	_, addr, err := Ecrecover(hash, sig)
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
 }
 
