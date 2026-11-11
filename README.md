@@ -2,6 +2,10 @@
 
 A simple Ethereum wallet implementation and utilities in Golang.
 
+## Requirements
+
+Go 1.26.10 or later.
+
 ## Install
 
 ```shell

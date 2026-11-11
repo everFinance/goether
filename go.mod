@@ -1,21 +1,23 @@
 module github.com/everFinance/goether
 
-go 1.17
+go 1.26.10
 
 require (
-	github.com/ethereum/go-ethereum v1.10.20
-	github.com/everFinance/ethrpc v1.0.4
-	github.com/stretchr/testify v1.7.2
+	github.com/ethereum/go-ethereum v1.17.10
+	github.com/everFinance/ethrpc v1.0.5
+	github.com/stretchr/testify v1.12.1
 )
 
 require (
-	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
-	github.com/kr/text v0.2.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20261104004426-a38b73404a2c // indirect
+	github.com/bits-and-blooms/bitset v1.29.0 // indirect
+	github.com/consensys/gnark-crypto v0.22.0 // indirect
+	github.com/crate-crypto/go-eth-kzg v1.5.0 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
+	github.com/ethereum/c-kzg-4844/v2 v2.1.8 // indirect
+	github.com/holiman/uint256 v1.3.2 // indirect
+	github.com/supranational/blst v0.3.17 // indirect
+	go.yaml.in/yaml/v3 v3.0.6 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 )
