@@ -39,13 +39,17 @@ func TestSignMsg(t *testing.T) {
 func TestSignTypedData(t *testing.T) {
 	typedDataJson := `{"primaryType":"Mail","types":{"EIP712Domain":[{"name":"name","type":"string"},{"name":"version","type":"string"},{"name":"chainId","type":"uint256"},{"name":"verifyingContract","type":"address"}],"Person":[{"name":"name","type":"string"},{"name":"wallet","type":"address"}],"Mail":[{"name":"from","type":"Person"},{"name":"to","type":"Person"},{"name":"contents","type":"string"}]},"domain":{"name":"Ether Mail","version":"1","chainId":1,"verifyingContract":"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"},"message":{"from":{"name":"Cow","wallet":"0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"},"to":{"name":"Bob","wallet":"0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"},"contents":"Hello, Bob!"}}`
 	var typedData apitypes.TypedData
-	json.Unmarshal([]byte(typedDataJson), &typedData)
+	assert.NoError(t, json.Unmarshal([]byte(typedDataJson), &typedData))
 	sig, err := TestSigner.SignTypedData(typedData)
 	assert.NoError(t, err)
-	assert.Equal(t, "0x0a80cc322f7a5e5e0965ff84fd76ea6479fae9d8ce29f7e076c3b9cb8e8097b80052ee91f1fad54d4348c518e42395848431746c8fee40420041f87ea05b5a281c", hexutil.Encode(sig))
+	assert.Equal(t, "0x0aab604b816b34ef3333bfec336a69a336421bda4e26cb92f53fb90bc921fb0364fb4ae00ef490cb7ac99bb2e6813c52035a8454d48d90ceff0e56787770303b1c", hexutil.Encode(sig))
 
 	hash, err := EIP712Hash(typedData)
+	assert.NoError(t, err)
+	// Canonical Ether Mail digest: https://eips.ethereum.org/assets/eip-712/Example.js
+	assert.Equal(t, "0xbe609aee343fb3c4b28e1df9e632fca64fcfaede20f02e86244efddf30957bd2", hexutil.Encode(hash))
 	_, addr, err := Ecrecover(hash, sig)
+	assert.NoError(t, err)
 	assert.Equal(t, "0xab6c371B6c466BcF14d4003601951e5873dF2AcA", addr.String())
 }
 
